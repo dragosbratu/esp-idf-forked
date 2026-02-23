@@ -1,54 +1,193 @@
-/*******************************************************************************/
-/*******************************************************************************/
- // Declare a void pointer
- void *ptr;
+#include <stdio.h>
+#include <stdlib.h>
 
- // Determine the size of the void pointer
- size_t size = sizeof(ptr);
-
-/*******************************************************************************/
-/*******************************************************************************/
- // What is this?
-
- int (*a[10])(int);
-
-/*******************************************************************************/
-/*******************************************************************************/
-// Define a structure with padding
-struct Example {
-    char a;     // 1 byte
-    int b;      // 4 bytes
-    char c;     // 1 byte
-};
-
-// What is the size of the struct?
-// How the memory layout will look like? 
-// How you can avoid padding?
 
 /*******************************************************************************/
 /*******************************************************************************/
 /*
-Assessment Requirement:
-1. Implement a function that returns the address of a static variable.
-2. The static variable should retain its value across multiple function calls.
-3. The function should be memory-efficient, suitable for embedded systems (e.g., 8-bit MCUs).
+8)
+
+Given the structure below:
+
+struct Example {
+    char a;
+    int b;
+    char c;
+};
+
+Questions:
+- What is the size of this struct?
+- How does the memory layout look?
+- Why does padding appear?
+- How can you avoid padding?
 */
+
+struct Example 
+{
+    char a;
+    int  b;
+    char c;
+};
 /*******************************************************************************/
 /*******************************************************************************/
 
-int main() 
-{  
-    foo();
-    return 0;
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+1)
+
+Declare a void pointer and determine its size.
+Does the size of a void* depend on the architecture?
+*/
+
+void void_pointer_example()
+{
+    void *ptr;
+    size_t size = sizeof(ptr);
+    printf("Size of void*: %zu\n", size);
 }
-  
-  
+/*******************************************************************************/
+/*******************************************************************************/
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+2)
+
+What is the size of an array of 10 integers?
+(Assume sizeof(int) is known.)
+*/
+
+void array_size_example()
+{
+    int a[10];
+    printf("Size of array: %zu\n", sizeof(a));
+}
+/*******************************************************************************/
+/*******************************************************************************/
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+3)
+
+Explain why sizeof(a) in main is different from sizeof(b) inside function f.
+What happens to arrays when passed as function parameters?
+*/
+
+void f(int b[10]) 
+{
+    printf("%zu\n", sizeof(b));
+}
+
+void sizeof_decay_example(void) 
+{
+    int a[10];
+    printf("%zu\n", sizeof(a));
+    f(a);
+}
+/*******************************************************************************/
+/*******************************************************************************/
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+4)
+
+What is the output of this function and why?
+Explain the implicit type conversion rules involved.
+*/
+
 void foo(void)
 {	
     unsigned int a = 6;
-    int b = -20; (a+b > 6) ? printf("> 6") : printf("<= 6");
+    int b = -20;
+    (a + b > 6) ? printf("> 6") : printf("<= 6");
+}
+/*******************************************************************************/
+/*******************************************************************************/
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+5)
+
+What happens in this code?
+Is the behavior defined or undefined? Why?
+*/
+
+void out_of_bounds_example() 
+{
+    int arr[3] = {1, 2, 3};
+    int *p = arr;
+
+    printf("%d\n", *(p + 3));
+}
+/*******************************************************************************/
+/*******************************************************************************/
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+6)
+
+Explain what is wrong in the following code.
+What happens when returning the address of a local variable?
+Compare it with dynamically allocated memory (malloc).
+Who is responsible for freeing the memory?
+*/
+
+int* createValue() 
+{
+    int x = 42;
+    return &x;   
 }
 
-// What os the output of this?
+int* createValueDin() 
+{
+    int *p = malloc(sizeof(int));
+    *p = 10;
+    // free(p);
+    return p;
+}
+/*******************************************************************************/
+/*******************************************************************************/
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+7)
+
+What does the following declaration mean?
+
+    int (*a[10])(int);
+
+Explain clearly what 'a' represents.
+*/
+
+int (*a[10])(int);
+/*******************************************************************************/
+/*******************************************************************************/
+
+
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/*
+9)
+
+Implement a function that returns the address of a static variable.
+The static variable must retain its value across multiple function calls.
+The solution must be memory-efficient and suitable for embedded systems
+(e.g., 8-bit microcontrollers).
+*/
 /*******************************************************************************/
 /*******************************************************************************/
