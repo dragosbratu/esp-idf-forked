@@ -3,14 +3,33 @@
  *
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  */
-/*  WiFi softAP & station Example
 
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
+/*
+ * WiFi softAP & station Example — interview version
+ *
+ * ---------------- INTERVIEW INSTRUCTIONS ----------------
+ * The candidate: please do the following (explain / implement / discuss)
+ *
+ * 1) Explain how the code works and what the plan is:
+ *    - Give a short, high-level plan for this program:
+ *    - Walk through the main steps in `app_main()`; include why each step is necessary.
+ *    
+ *
+ * 2) Implement `wifi_event_handler` (below) — it is intentionally left empty.
+ * https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-guides/event-handling.html
+ *    - Candidate should implement handling for at least:
+ *        * check when wifi is started, connected, disconnected 
+ *        * log when station joins the softAP
+ *        * log when station leaves the softAP
+ *        * attempt to connect)
+ *        * log when we have an IP and just then set the WIFI_CONNECTED_BIT
+ *
+ * 3) Explain `xEventGroupWaitBits` usage and safety questions:
+ *    - Why is an EventGroup useful here?
+ *
+ * -----------------------------------------------------
+ */
 
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -37,19 +56,17 @@
  * 1. After connecting to a STA and obtaining an IP (IP_EVENT_STA_GOT_IP),
  *    scan for SSIDs and sort them by RSSI (from the strongest signal to lowest) and print them.
  */
-
-
 /* The examples use WiFi configuration that you can set via project configuration menu.
 
    If you'd rather not, just change the below entries to strings with
    the config you want - ie #define EXAMPLE_ESP_WIFI_STA_SSID "mywifissid"
 */
-
 /* STA Configuration */
 #define EXAMPLE_ESP_WIFI_STA_SSID           CONFIG_ESP_WIFI_REMOTE_AP_SSID
 #define EXAMPLE_ESP_WIFI_STA_PASSWD         CONFIG_ESP_WIFI_REMOTE_AP_PASSWORD
 #define EXAMPLE_ESP_MAXIMUM_RETRY           CONFIG_ESP_MAXIMUM_STA_RETRY
 
+/* Authentication threshold selection (from Kconfig) */
 #if CONFIG_ESP_WIFI_AUTH_OPEN
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD   WIFI_AUTH_OPEN
 #elif CONFIG_ESP_WIFI_AUTH_WEP
@@ -74,7 +91,6 @@
 #define EXAMPLE_ESP_WIFI_CHANNEL            CONFIG_ESP_WIFI_AP_CHANNEL
 #define EXAMPLE_MAX_STA_CONN                CONFIG_ESP_MAX_STA_CONN_AP
 
-
 /* The event group allows multiple bits for each event, but we only care about two events:
  * - we are connected to the AP with an IP
  * - we failed to connect after the maximum amount of retries */
@@ -92,26 +108,28 @@ static int s_retry_num = 0;
 /* FreeRTOS event group to signal when we are connected/disconnected */
 static EventGroupHandle_t s_wifi_event_group;
 
+/* ------------------------------------------------------------------
+ * wifi_event_handler - STUB FOR INTERVIEW
+ *
+ * NOTE: This function is intentionally left unimplemented. The candidate
+ * must implement it during the interview. Requirements:
+ *
+ *
+ * - Do NOT perform long-blocking operations inside this handler. If heavy
+ *   work is needed, notify another task to perform it.
+ *
+ * - Validate event_data before dereferencing it and use the correct type
+ *   casts for each event.
+ *
+ * Implement the handler below and explain your choices (synchronization,
+ * error handling, logging).
+ * ------------------------------------------------------------------ */
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data)
 {
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_AP_STACONNECTED) {
-        wifi_event_ap_staconnected_t *event = (wifi_event_ap_staconnected_t *) event_data;
-        ESP_LOGI(TAG_AP, "Station "MACSTR" joined, AID=%d",
-                 MAC2STR(event->mac), event->aid);
-    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_AP_STADISCONNECTED) {
-        wifi_event_ap_stadisconnected_t *event = (wifi_event_ap_stadisconnected_t *) event_data;
-        ESP_LOGI(TAG_AP, "Station "MACSTR" left, AID=%d, reason:%d",
-                 MAC2STR(event->mac), event->aid, event->reason);
-    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        esp_wifi_connect();
-        ESP_LOGI(TAG_STA, "Station started");
-    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        ip_event_got_ip_t *event = (ip_event_got_ip_t *) event_data;
-        ESP_LOGI(TAG_STA, "Got IP:" IPSTR, IP2STR(&event->ip_info.ip));
-        s_retry_num = 0;
-        xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-    }
+    /* 
+    TODO (candidate): implement this handler.
+     */
 }
 
 /* Initialize soft AP */
