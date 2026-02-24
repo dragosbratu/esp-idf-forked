@@ -265,10 +265,9 @@ int main()
 /*
 10)
 
-Implement a function that returns the address of a static variable.
+Implement a void function that returns the address of a static variable trough its parameter.
 The static variable must retain its value across multiple function calls.
-The solution must be memory-efficient and suitable for embedded systems
-(e.g., 8-bit microcontrollers).
+The solution must be memory-efficient and suitable for embedded systems.
 */
 /*******************************************************************************/
 /*******************************************************************************/
